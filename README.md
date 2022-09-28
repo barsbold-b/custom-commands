@@ -28,6 +28,7 @@ file and write boiler plate into your file.
 This command compiles cpp file into machine code easily.  
 
 **Usage**  
+
 `> compile [filename] [optional]`  
   
 **For example**
@@ -35,4 +36,4 @@ This command compiles cpp file into machine code easily.
 When you write `> compile foo[.cpp]` command in your terminal, it compiles your 
 `foo.cpp` file into `foo` machine code. In addition, file extension is optional.  
   
-Also, you can pass `-e` flag to execute immediately.
+Also, you can pass `-e` flag optionally to execute machine code immediately.
