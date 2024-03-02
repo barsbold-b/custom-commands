@@ -1,19 +1,9 @@
 #!/bin/bash
 
-SEARCH_PATH=""
+Q="$1"
 
-if [ -n "$1" ]
-then
-  SEARCH_PATH="*${1}*"
-else
-  SEARCH_PATH="*"
-fi
-
-search_command() {
-  find * \
-    -path "*/node_modules" -prune -o \
-    -path "*/.git" -prune -o \
-    -path "$SEARCH_PATH" -type f
+search() {
+  fd $Q -t f -c=never
 }
 fzf_command() {
   fzf +m --cycle --reverse \
@@ -21,19 +11,15 @@ fzf_command() {
     --preview 'bat --style=numbers --color=always --line-range :500 {}'
 }
 
-# Store search results directly to avoid unnecessary executions
-RES=$(search_command)
+RES=$(search)
+RC=$(wc -l <<< "$RES")
 
-# Count lines efficiently
-FC=$(wc -l <<< "$RES")
-
-if [[ $FC -eq 0 || -z $RES ]]
+if [[ "$RC" -eq 0 || -z "$RES" ]]
 then
-  FC=0
   echo "There is no matching file"
-elif [ $FC -ne 1 ]
+elif [ $RC -ne 1 ]
 then
-  RES=$(echo "$RES" | fzf_command)  # Use fzf for multiple matches
+  RES=$(echo "$RES" | fzf_command)
 fi
 
 if [ -n "$RES" ]
