@@ -21,18 +21,22 @@ fzf_command() {
     --preview 'bat --style=numbers --color=always --line-range :500 {}'
 }
 
-RES=""
-FC=$(search_command | wc -l)
+# Store search results directly to avoid unnecessary executions
+RES=$(search_command)
 
-if [[ $FC -eq 0 ]]; then
-  echo "there is no matching file"
-elif [[ $FC -eq 1 ]]; then
-  RES=$(search_command)
-else
-  RES=$(search_command | fzf_command)
+# Count lines efficiently
+FC=$(wc -l <<< "$RES")
+
+if [[ $FC -eq 0 || -z $RES ]]
+then
+  FC=0
+  echo "There is no matching file"
+elif [ $FC -ne 1 ]
+then
+  RES=$(echo "$RES" | fzf_command)  # Use fzf for multiple matches
 fi
 
 if [ -n "$RES" ]
 then
-  nvim $RES
+  nvim "$RES"
 fi
